@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meta Ad Library - RMG Creative Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <h1>Meta Ad Library - RMG Creative Tracker</h1>
+      <p>Monitor competitor creatives by category and publisher, inspired by the RMG targeting doc.</p>
+    </div>
+    <div class="header-actions">
+      <button id="resetState" class="secondary">Reset to defaults</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="controls">
+      <div class="control-group">
+        <label for="industryFilter">Industry</label>
+        <select id="industryFilter">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="categoryFilter">Category</label>
+        <select id="categoryFilter">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="tagFilter">Publisher tags</label>
+        <select id="tagFilter">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="control-group search">
+        <label for="searchInput">Search</label>
+        <input id="searchInput" type="search" placeholder="Search publisher name" />
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Graph API access token</h2>
+      <p class="helper-text">
+        Paste the Meta Graph API access token when you need to query the Ad Library. The token is stored in this
+        session only and can be supplied from an untracked <code>config.js</code>.
+      </p>
+      <div class="token-status-row">
+        <div class="token-status-block">
+          <p class="status-label">Current token</p>
+          <p id="graphTokenStatus" class="token-status">Not set</p>
+          <p id="graphTokenSource" class="token-source">Loaded from: none</p>
+        </div>
+        <form id="graphTokenForm" class="form-grid token-form">
+          <label>
+            Set or replace token
+            <input
+              type="password"
+              id="graphTokenInput"
+              autocomplete="off"
+              placeholder="Paste the Graph API access token"
+              inputmode="text"
+            />
+          </label>
+          <div class="form-actions">
+            <button type="submit">Save token</button>
+            <button type="button" id="clearGraphToken" class="secondary">Clear token</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="grid" id="publisherGrid" aria-live="polite"></section>
+
+    <section class="panel">
+      <h2>Add a publisher</h2>
+      <p class="helper-text">Add new publishers to keep your list current. You can include multiple tags separated by commas.</p>
+      <form id="publisherForm" class="form-grid">
+        <label>
+          Publisher name
+          <input type="text" id="publisherName" required />
+        </label>
+        <label>
+          Category
+          <select id="publisherCategory" required></select>
+        </label>
+        <label>
+          Tag (optional)
+          <input
+            type="text"
+            id="publisherTag"
+            placeholder="e.g. Multiple creative, Canada, New launch"
+          />
+        </label>
+        <div class="form-actions">
+          <button type="submit">Add publisher</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <template id="publisherCardTemplate">
+    <article class="card">
+      <div class="card-header">
+        <div>
+          <p class="tag us-only">US Only</p>
+          <p class="tag industry-tag"></p>
+        </div>
+        <button class="icon-button" title="Remove publisher">✕</button>
+      </div>
+      <h3 class="publisher-name"></h3>
+      <p class="category"></p>
+      <div class="tag-list"></div>
+    </article>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
