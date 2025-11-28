@@ -425,29 +425,36 @@ async function loadCreativesForPublisher(publisherId, { focusSelect = false } = 
   }
 }
 
-function formatGraphError(error) {
+function formatGraphError(error, meta = {}) {
   if (!error) return "An unknown Graph API error occurred.";
 
   const parts = [error.error_user_msg || error.message || "Graph API request failed."];
   const codes = [error.code, error.error_subcode].filter(Boolean);
   if (codes.length) parts.push(`(code ${codes.join("/")})`);
   if (error.fbtrace_id) parts.push(`trace ${error.fbtrace_id}`);
+  if (meta.status) parts.push(`[HTTP ${meta.status}]`);
 
-  return parts.join(" ");
+  const message = parts.join(" ");
+
+  if (codes.includes(1)) {
+    return `${message} Check that the access token is valid, not expired, and has Ads Library access with ads_read. If the issue persists, regenerate the token and retry.`;
+  }
+
+  return message;
 }
 
 async function parseGraphError(response) {
   try {
     const data = await response.json();
-    if (data?.error) return formatGraphError(data.error);
-    if (data?.message) return data.message;
+    if (data?.error) return formatGraphError(data.error, { status: response.status });
+    if (data?.message) return `${data.message} [HTTP ${response.status}]`;
   } catch (err) {
     // Fall through to text parsing
   }
 
   try {
     const raw = await response.text();
-    if (raw) return raw;
+    if (raw) return `${raw.trim()} [HTTP ${response.status}]`;
   } catch (err) {
     // Ignore parse errors and return fallback below
   }
