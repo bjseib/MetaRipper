@@ -1,4 +1,5 @@
 const defaultState = {
+  industries: ["Real Money Gaming"],
   categories: [
     "Online Casino",
     "Online Sportsbook",
@@ -45,6 +46,45 @@ const defaultState = {
     { name: "Novig App", category: "DFS" },
     { name: "FanDuel Picks", category: "DFS" },
     { name: "Rebet, Inc.", category: "DFS" },
+    { name: "Caesars Palace Online Casino", category: "Online Casino", tags: [] },
+    { name: "DraftKings Casino", category: "Online Casino", tags: [] },
+    { name: "FanDuel Casino", category: "Online Casino", tags: [] },
+    { name: "BetMGM Casino", category: "Online Casino", tags: [] },
+    { name: "Bet365 US", category: "Online Casino", tags: [] },
+    { name: "Hard Rock Bet", category: "Online Casino", tags: [] },
+    { name: "Golden Nugget Online Casino", category: "Online Casino", tags: [] },
+    { name: "BetRivers", category: "Online Casino", tags: [] },
+    { name: "betPARX", category: "Online Casino", tags: [] },
+    { name: "PlayStar", category: "Online Casino", tags: [] },
+    { name: "Fanatics Casino", category: "Online Casino", tags: [] },
+    { name: "Borgata Hotel Casino & Spa", category: "Online Casino", tags: [] },
+    { name: "Bally Bet Sportsbook", category: "Online Casino", tags: [] },
+    { name: "FireKeepers Casino", category: "Online Casino", tags: [] },
+    { name: "Caesars Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "DraftKings Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "FanDuel Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "BetMGM", category: "Online Sportsbook", tags: [] },
+    { name: "betPARX Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "Hard Rock Bet", category: "Online Sportsbook", tags: [] },
+    { name: "BetRivers", category: "Online Sportsbook", tags: [] },
+    { name: "Bally Bet Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "FireKeepers Casino", category: "Online Sportsbook", tags: [] },
+    { name: "Chumba Casino", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "WOW Vegas", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "McLuck.com", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "High 5 Casino", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "RealPrize", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "Betr", category: "DFS", tags: [] },
+    { name: "Thrillzz Social Sportsbook", category: "DFS", tags: [] },
+    { name: "Dabble Fantasy", category: "DFS", tags: [] },
+    { name: "OwnersBox.com", category: "DFS", tags: [] },
+    { name: "Onyx Odds", category: "DFS", tags: [] },
+    { name: "Sleeper", category: "DFS", tags: [] },
+    { name: "DraftKings Pick6", category: "DFS", tags: [] },
+    { name: "PrizePicks", category: "DFS", tags: [] },
+    { name: "Novig App", category: "DFS", tags: [] },
+    { name: "FanDuel Picks", category: "DFS", tags: [] },
+    { name: "Rebet, Inc.", category: "DFS", tags: [] },
   ],
 };
 
@@ -60,6 +100,11 @@ const adStatus = document.getElementById("adStatus");
 const adResults = document.getElementById("adResults");
 const adLibraryForm = document.getElementById("adLibraryForm");
 const refreshPublisherOptions = document.getElementById("refreshPublisherOptions");
+const industryFilter = document.getElementById("industryFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+const tagFilter = document.getElementById("tagFilter");
+const searchInput = document.getElementById("searchInput");
+const publisherGrid = document.getElementById("publisherGrid");
 const graphTokenStatus = document.getElementById("graphTokenStatus");
 const graphTokenSource = document.getElementById("graphTokenSource");
 const graphTokenForm = document.getElementById("graphTokenForm");
@@ -83,6 +128,12 @@ const sessionToken = sanitizeGraphToken(
   sessionStorage.getItem("graphApiAccessToken") || ""
 );
 const configToken = sanitizeGraphToken(window.graphConfig?.graphApiAccessToken || "");
+const publisherTagInput = document.getElementById("publisherTag");
+const resetButton = document.getElementById("resetState");
+const cardTemplate = document.getElementById("publisherCardTemplate");
+
+const sessionToken = sessionStorage.getItem("graphApiAccessToken") || "";
+const configToken = window.graphConfig?.graphApiAccessToken || "";
 let graphApiToken = sessionToken || configToken;
 let graphApiTokenSource = graphApiToken
   ? sessionToken
@@ -175,6 +226,13 @@ function populatePublisherSelect() {
   if (Array.from(adPublisherSelect.options).some((opt) => opt.value === current)) {
     adPublisherSelect.value = current;
   }
+  populateOptions(industryFilter, state.industries);
+  populateOptions(categoryFilter, state.categories);
+  populateOptions(publisherCategoryInput, state.categories);
+
+  const tags = new Set();
+  state.publishers.forEach((p) => p.tags.forEach((tag) => tags.add(tag)));
+  populateOptions(tagFilter, Array.from(tags).sort());
 }
 
 function populateOptions(select, options) {
@@ -226,6 +284,24 @@ function renderGrid() {
       }
     });
     card.querySelector(".category").textContent = publisher.category;
+    card.querySelector(".publisher-name").textContent = publisher.name;
+    card.querySelector(".category").textContent = publisher.category;
+    card.querySelector(".industry-tag").textContent = state.industries[0];
+    const tagList = card.querySelector(".tag-list");
+
+    if (publisher.tags.length === 0) {
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = "No special tags";
+      tagList.appendChild(tag);
+    } else {
+      publisher.tags.forEach((tagText) => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = tagText;
+        tagList.appendChild(tag);
+      });
+    }
 
     const removeButton = card.querySelector(".icon-button");
     removeButton.addEventListener("click", () => removePublisher(publisher.id));
@@ -237,23 +313,37 @@ function renderGrid() {
 function filterPublisher(publisher) {
   const matchesCategory =
     categoryFilter.value === "all" || publisher.category === categoryFilter.value;
+  const matchesIndustry =
+    industryFilter.value === "all" || state.industries.includes(industryFilter.value);
+  const matchesCategory =
+    categoryFilter.value === "all" || publisher.category === categoryFilter.value;
+  const matchesTag =
+    tagFilter.value === "all" || publisher.tags.includes(tagFilter.value);
   const matchesSearch = publisher.name
     .toLowerCase()
     .includes(searchInput.value.trim().toLowerCase());
 
   return matchesCategory && matchesSearch;
+  return matchesIndustry && matchesCategory && matchesTag && matchesSearch;
 }
 
 function addPublisher(event) {
   event.preventDefault();
   const name = publisherNameInput.value.trim();
   const category = publisherCategoryInput.value;
+  const rawTags = publisherTagInput.value.trim();
   if (!name || !category) return;
+
+  const tags = rawTags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 
   state.publishers.unshift({
     id: crypto.randomUUID(),
     name,
     category,
+    tags,
   });
 
   hydrateFilters();
@@ -464,6 +554,7 @@ function removePublisher(id) {
 function handleGraphTokenSubmit(event) {
   event.preventDefault();
   const token = sanitizeGraphToken(graphTokenInput?.value);
+  const token = graphTokenInput?.value.trim();
   if (!token) return;
 
   graphApiToken = token;
@@ -494,6 +585,11 @@ function bindListeners() {
   if (adLibraryForm) adLibraryForm.addEventListener("submit", handleAdLibrarySubmit);
   if (refreshPublisherOptions)
     refreshPublisherOptions.addEventListener("click", populatePublisherSelect);
+  [industryFilter, categoryFilter, tagFilter].forEach((select) =>
+    select.addEventListener("change", renderGrid)
+  );
+  searchInput.addEventListener("input", renderGrid);
+  publisherForm.addEventListener("submit", addPublisher);
   if (graphTokenForm) graphTokenForm.addEventListener("submit", handleGraphTokenSubmit);
   if (clearGraphTokenButton)
     clearGraphTokenButton.addEventListener("click", handleClearGraphToken);
