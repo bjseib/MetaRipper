@@ -4,11 +4,17 @@ A lightweight, static web app for tracking competitor creative pulled from the M
 
 ## Usage
 
-1. Copy `config.example.js` to `config.js` (git-ignored) and paste your Meta Graph API access token into `graphApiAccessToken`.
-2. Open `index.html` in your browser (no build step required). The token will auto-load from `config.js` or you can paste it into the "Graph API access token" box (saved only in this tab's session storage).
-3. In the "Ad Library creatives" panel, filter by industry, category, tag, or search to focus the grid and the ad query target.
-4. Click any publisher name in the grid (or pick one from the dropdown) to fetch creatives from the Meta Ad Library with your token. The request uses `ad_active_status=ALL` and `ad_type=ALL` to avoid overly restrictive filters and will surface any Graph API error messages inline.
-5. Use the "Add a publisher" form to insert new entries (optionally adding one or more comma-separated tags).
-6. Remove publishers with the ✕ button or restore the default list with "Reset to defaults".
+### Setup
+- Copy `config.example.js` to `config.js` (git-ignored) and paste your Meta Graph API access token into `graphApiAccessToken`.
+- Alternatively, paste your token directly into the "Graph API access token" box in the UI; it is stored only in this tab's session storage.
 
-All publisher data is stored in localStorage so your edits persist between visits. Graph API tokens are never committed to the repo and, when entered in the UI, are scoped to the current browser tab.
+### Fetch creatives
+1. Open `index.html` in your browser (no build step required). Any token in `config.js` will be picked up automatically.
+2. In the combined "Ad Library creatives" panel, narrow the view with industry, category, tag, or search filters—these filters also scope the ad fetch target.
+3. Pick a publisher from the dropdown **or click a publisher name in the grid** to fetch creatives with your token. Requests use `ad_active_status=ALL` and `ad_type=ALL` and show any Graph API errors inline.
+
+### Manage publishers
+1. Use the "Add a publisher" form to insert new entries (optionally adding one or more comma-separated tags).
+2. Remove publishers with the ✕ button or restore the default list with "Reset to defaults".
+
+Publisher data is stored in localStorage so your edits persist between visits. Graph API tokens are never committed to the repo.
