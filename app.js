@@ -75,8 +75,18 @@ const publisherTagInput = document.getElementById("publisherTag");
 const resetButton = document.getElementById("resetState");
 const cardTemplate = document.getElementById("publisherCardTemplate");
 
-const sessionToken = sessionStorage.getItem("graphApiAccessToken") || "";
-const configToken = window.graphConfig?.graphApiAccessToken || "";
+function sanitizeGraphToken(raw) {
+  if (!raw) return "";
+  const trimmed = raw.trim();
+  const withoutBearer = trimmed.replace(/^Bearer\s+/i, "");
+  const withoutQuotes = withoutBearer.replace(/^['"]|['"]$/g, "");
+  return withoutQuotes.replace(/\s+/g, "");
+}
+
+const sessionToken = sanitizeGraphToken(
+  sessionStorage.getItem("graphApiAccessToken") || ""
+);
+const configToken = sanitizeGraphToken(window.graphConfig?.graphApiAccessToken || "");
 let graphApiToken = sessionToken || configToken;
 let graphApiTokenSource = graphApiToken
   ? sessionToken
@@ -370,6 +380,14 @@ async function loadCreativesForPublisher(publisherId, { focusSelect = false } = 
     return;
   }
 
+  if (/\s/.test(graphApiToken)) {
+    setAdStatus(
+      "The access token looks malformed. Paste the raw token without quotes, spaces, or a 'Bearer' prefix.",
+      "warn"
+    );
+    return;
+  }
+
   if (focusSelect && adPublisherSelect) {
     adPublisherSelect.value = publisherId;
   }
@@ -440,6 +458,10 @@ function formatGraphError(error, meta = {}) {
     return `${message} Check that the access token is valid, not expired, and has Ads Library access with ads_read. If the issue persists, regenerate the token and retry.`;
   }
 
+  if (codes.includes(190)) {
+    return `${message} The token may be malformed. Paste the raw access token without quotes or a 'Bearer' prefix, ensure it has ads_read/Ads Library permissions, and try again.`;
+  }
+
   return message;
 }
 
@@ -477,7 +499,7 @@ function removePublisher(id) {
 
 function handleGraphTokenSubmit(event) {
   event.preventDefault();
-  const token = graphTokenInput?.value.trim();
+  const token = sanitizeGraphToken(graphTokenInput?.value);
   if (!token) return;
 
   graphApiToken = token;
