@@ -403,22 +403,14 @@ async function loadCreativesForPublisher(publisherId, { focusSelect = false } = 
   try {
     const response = await fetch(url.toString());
     if (!response.ok) {
-      const rawMessage = await response.text();
-      let friendlyMessage = rawMessage;
-      try {
-        const parsed = JSON.parse(rawMessage);
-        friendlyMessage = parsed?.error?.message || rawMessage;
-      } catch (parseErr) {
-        friendlyMessage = rawMessage;
-      }
-      throw new Error(
-        friendlyMessage || `Request failed with status ${response.status}`
-      );
+      const graphErr = await parseGraphError(response);
+      throw new Error(graphErr);
     }
 
     const data = await response.json();
-    if (data?.error?.message) {
-      throw new Error(data.error.message);
+    if (data?.error) {
+      const graphErr = formatGraphError(data.error);
+      throw new Error(graphErr);
     }
 
     const items = data?.data || [];
@@ -426,13 +418,41 @@ async function loadCreativesForPublisher(publisherId, { focusSelect = false } = 
     setAdStatus(`Loaded ${items.length} creatives for ${publisher.name}.`, "success");
   } catch (err) {
     console.error("Failed to fetch ads", err);
-    setAdStatus(
-      err?.message
-        ? `Unable to load creatives: ${err.message}`
-        : "Unable to load creatives. Confirm the token, permissions, and network access, then try again.",
-      "error"
-    );
+    const fallback =
+      "Unable to load creatives. Confirm the token, permissions, and network access, then try again.";
+    const message = err?.message || fallback;
+    setAdStatus(`Unable to load creatives: ${message}`, "error");
   }
+}
+
+function formatGraphError(error) {
+  if (!error) return "An unknown Graph API error occurred.";
+
+  const parts = [error.error_user_msg || error.message || "Graph API request failed."];
+  const codes = [error.code, error.error_subcode].filter(Boolean);
+  if (codes.length) parts.push(`(code ${codes.join("/")})`);
+  if (error.fbtrace_id) parts.push(`trace ${error.fbtrace_id}`);
+
+  return parts.join(" ");
+}
+
+async function parseGraphError(response) {
+  try {
+    const data = await response.json();
+    if (data?.error) return formatGraphError(data.error);
+    if (data?.message) return data.message;
+  } catch (err) {
+    // Fall through to text parsing
+  }
+
+  try {
+    const raw = await response.text();
+    if (raw) return raw;
+  } catch (err) {
+    // Ignore parse errors and return fallback below
+  }
+
+  return `Request failed with status ${response.status}`;
 }
 
 async function handleAdLibrarySubmit(event) {
