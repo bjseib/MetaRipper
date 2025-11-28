@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meta Ad Library - RMG Creative Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <h1>Meta Ad Library - RMG Creative Tracker</h1>
+      <p>Monitor competitor creatives by category and publisher, inspired by the RMG targeting doc.</p>
+    </div>
+    <div class="header-actions">
+      <button id="resetState" class="secondary">Reset to defaults</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel" id="adLibraryPanel">
+      <div class="panel-header">
+        <div>
+          <h2>Ad Library creatives</h2>
+          <p class="helper-text">Fetch recent ads for a publisher using your Graph API token. Results are read-only and not saved.</p>
+        </div>
+        <button id="refreshPublisherOptions" class="secondary">Sync publishers</button>
+      </div>
+
+      <div class="ad-panel-grid">
+        <div class="filter-block">
+          <div class="block-header">
+            <h3>Filter publishers</h3>
+            <p class="helper-text">Filter by category or search to focus the grid and ad query target.</p>
+          </div>
+          <div class="controls compact">
+            <div class="control-group">
+              <label for="categoryFilter">Category</label>
+              <select id="categoryFilter">
+                <option value="all">All</option>
+              </select>
+            </div>
+            <div class="control-group search">
+              <label for="searchInput">Search</label>
+              <input id="searchInput" type="search" placeholder="Search publisher name" />
+            </div>
+          </div>
+        </div>
+
+        <div class="ad-form-block">
+          <div class="block-header">
+            <h3>Load creatives</h3>
+            <p class="helper-text">Pick a publisher, set country and limit, then load the latest Ad Library entries.</p>
+          </div>
+          <form id="adLibraryForm" class="form-grid ad-form">
+            <label>
+              Publisher
+              <select id="adPublisher" required>
+                <option value="">Select a publisher</option>
+              </select>
+            </label>
+            <label>
+              Country (ad_reached_countries)
+              <input type="text" id="adCountry" value="US" aria-label="Country code" />
+            </label>
+            <label>
+              Limit
+              <input type="number" id="adLimit" min="1" max="50" value="12" />
+            </label>
+            <div class="form-actions">
+              <button type="submit">Load creatives</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="ad-status" id="adStatus">No request made yet.</div>
+      <div class="ad-results" id="adResults"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Graph API access token</h2>
+      <p class="helper-text">
+        Paste the Meta Graph API access token when you need to query the Ad Library. The token is stored in this
+        session only and can be supplied from an untracked <code>config.js</code>.
+      </p>
+      <div class="token-status-row">
+        <div class="token-status-block">
+          <p class="status-label">Current token</p>
+          <p id="graphTokenStatus" class="token-status">Not set</p>
+          <p id="graphTokenSource" class="token-source">Loaded from: none</p>
+        </div>
+        <form id="graphTokenForm" class="form-grid token-form">
+          <label>
+            Set or replace token
+            <input
+              type="password"
+              id="graphTokenInput"
+              autocomplete="off"
+              placeholder="Paste the Graph API access token"
+              inputmode="text"
+            />
+          </label>
+          <div class="form-actions">
+            <button type="submit">Save token</button>
+            <button type="button" id="clearGraphToken" class="secondary">Clear token</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="grid" id="publisherGrid" aria-live="polite"></section>
+
+    <section class="panel">
+      <h2>Add a publisher</h2>
+      <p class="helper-text">Add new publishers to keep your list current.</p>
+      <form id="publisherForm" class="form-grid">
+        <label>
+          Publisher name
+          <input type="text" id="publisherName" required />
+        </label>
+        <label>
+          Category
+          <select id="publisherCategory" required></select>
+        </label>
+        <div class="form-actions">
+          <button type="submit">Add publisher</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <template id="publisherCardTemplate">
+    <article class="card">
+      <div class="card-header">
+        <button class="icon-button" title="Remove publisher">✕</button>
+      </div>
+      <h3 class="publisher-name"></h3>
+      <p class="category"></p>
+    </article>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
