@@ -7,45 +7,6 @@ const defaultState = {
     "DFS",
   ],
   publishers: [
-    { name: "Caesars Palace Online Casino", category: "Online Casino" },
-    { name: "DraftKings Casino", category: "Online Casino" },
-    { name: "FanDuel Casino", category: "Online Casino" },
-    { name: "BetMGM Casino", category: "Online Casino" },
-    { name: "Bet365 US", category: "Online Casino" },
-    { name: "Hard Rock Bet", category: "Online Casino" },
-    { name: "Golden Nugget Online Casino", category: "Online Casino" },
-    { name: "BetRivers", category: "Online Casino" },
-    { name: "betPARX", category: "Online Casino" },
-    { name: "PlayStar", category: "Online Casino" },
-    { name: "Fanatics Casino", category: "Online Casino" },
-    { name: "Borgata Hotel Casino & Spa", category: "Online Casino" },
-    { name: "Bally Bet Sportsbook", category: "Online Casino" },
-    { name: "FireKeepers Casino", category: "Online Casino" },
-    { name: "Caesars Sportsbook", category: "Online Sportsbook" },
-    { name: "DraftKings Sportsbook", category: "Online Sportsbook" },
-    { name: "FanDuel Sportsbook", category: "Online Sportsbook" },
-    { name: "BetMGM", category: "Online Sportsbook" },
-    { name: "betPARX Sportsbook", category: "Online Sportsbook" },
-    { name: "Hard Rock Bet", category: "Online Sportsbook" },
-    { name: "BetRivers", category: "Online Sportsbook" },
-    { name: "Bally Bet Sportsbook", category: "Online Sportsbook" },
-    { name: "FireKeepers Casino", category: "Online Sportsbook" },
-    { name: "Chumba Casino", category: "Sweepstakes/Social Casino" },
-    { name: "WOW Vegas", category: "Sweepstakes/Social Casino" },
-    { name: "McLuck.com", category: "Sweepstakes/Social Casino" },
-    { name: "High 5 Casino", category: "Sweepstakes/Social Casino" },
-    { name: "RealPrize", category: "Sweepstakes/Social Casino" },
-    { name: "Betr", category: "DFS" },
-    { name: "Thrillzz Social Sportsbook", category: "DFS" },
-    { name: "Dabble Fantasy", category: "DFS" },
-    { name: "OwnersBox.com", category: "DFS" },
-    { name: "Onyx Odds", category: "DFS" },
-    { name: "Sleeper", category: "DFS" },
-    { name: "DraftKings Pick6", category: "DFS" },
-    { name: "PrizePicks", category: "DFS" },
-    { name: "Novig App", category: "DFS" },
-    { name: "FanDuel Picks", category: "DFS" },
-    { name: "Rebet, Inc.", category: "DFS" },
     { name: "Caesars Palace Online Casino", category: "Online Casino", tags: [] },
     { name: "DraftKings Casino", category: "Online Casino", tags: [] },
     { name: "FanDuel Casino", category: "Online Casino", tags: [] },
@@ -90,16 +51,6 @@ const defaultState = {
 
 const storageKey = "rmg-meta-ad-library";
 
-const categoryFilter = document.getElementById("categoryFilter");
-const searchInput = document.getElementById("searchInput");
-const publisherGrid = document.getElementById("publisherGrid");
-const adPublisherSelect = document.getElementById("adPublisher");
-const adCountryInput = document.getElementById("adCountry");
-const adLimitInput = document.getElementById("adLimit");
-const adStatus = document.getElementById("adStatus");
-const adResults = document.getElementById("adResults");
-const adLibraryForm = document.getElementById("adLibraryForm");
-const refreshPublisherOptions = document.getElementById("refreshPublisherOptions");
 const industryFilter = document.getElementById("industryFilter");
 const categoryFilter = document.getElementById("categoryFilter");
 const tagFilter = document.getElementById("tagFilter");
@@ -113,21 +64,6 @@ const clearGraphTokenButton = document.getElementById("clearGraphToken");
 const publisherForm = document.getElementById("publisherForm");
 const publisherNameInput = document.getElementById("publisherName");
 const publisherCategoryInput = document.getElementById("publisherCategory");
-const resetButton = document.getElementById("resetState");
-const cardTemplate = document.getElementById("publisherCardTemplate");
-
-function sanitizeGraphToken(raw) {
-  if (!raw) return "";
-  const trimmed = raw.trim();
-  const withoutBearer = trimmed.replace(/^Bearer\s+/i, "");
-  const withoutQuotes = withoutBearer.replace(/^['"]|['"]$/g, "");
-  return withoutQuotes.replace(/\s+/g, "");
-}
-
-const sessionToken = sanitizeGraphToken(
-  sessionStorage.getItem("graphApiAccessToken") || ""
-);
-const configToken = sanitizeGraphToken(window.graphConfig?.graphApiAccessToken || "");
 const publisherTagInput = document.getElementById("publisherTag");
 const resetButton = document.getElementById("resetState");
 const cardTemplate = document.getElementById("publisherCardTemplate");
@@ -202,30 +138,6 @@ function saveState(state) {
 let state = loadState();
 
 function hydrateFilters() {
-  populateOptions(categoryFilter, state.categories);
-  populateOptions(publisherCategoryInput, state.categories);
-  populatePublisherSelect();
-}
-
-function populatePublisherSelect() {
-  if (!adPublisherSelect) return;
-  const current = adPublisherSelect.value;
-  adPublisherSelect.innerHTML = "";
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = "Select a publisher";
-  adPublisherSelect.appendChild(placeholder);
-
-  state.publishers.forEach((publisher) => {
-    const opt = document.createElement("option");
-    opt.value = publisher.id;
-    opt.textContent = publisher.name;
-    adPublisherSelect.appendChild(opt);
-  });
-
-  if (Array.from(adPublisherSelect.options).some((opt) => opt.value === current)) {
-    adPublisherSelect.value = current;
-  }
   populateOptions(industryFilter, state.industries);
   populateOptions(categoryFilter, state.categories);
   populateOptions(publisherCategoryInput, state.categories);
@@ -269,21 +181,6 @@ function renderGrid() {
 
   filtered.forEach((publisher) => {
     const card = cardTemplate.content.cloneNode(true);
-    const nameEl = card.querySelector(".publisher-name");
-    nameEl.textContent = publisher.name;
-    nameEl.tabIndex = 0;
-    nameEl.setAttribute("role", "button");
-    nameEl.setAttribute("title", "Load creatives for this publisher");
-    nameEl.addEventListener("click", () =>
-      loadCreativesForPublisher(publisher.id, { focusSelect: true })
-    );
-    nameEl.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        loadCreativesForPublisher(publisher.id, { focusSelect: true });
-      }
-    });
-    card.querySelector(".category").textContent = publisher.category;
     card.querySelector(".publisher-name").textContent = publisher.name;
     card.querySelector(".category").textContent = publisher.category;
     card.querySelector(".industry-tag").textContent = state.industries[0];
@@ -311,8 +208,6 @@ function renderGrid() {
 }
 
 function filterPublisher(publisher) {
-  const matchesCategory =
-    categoryFilter.value === "all" || publisher.category === categoryFilter.value;
   const matchesIndustry =
     industryFilter.value === "all" || state.industries.includes(industryFilter.value);
   const matchesCategory =
@@ -323,7 +218,6 @@ function filterPublisher(publisher) {
     .toLowerCase()
     .includes(searchInput.value.trim().toLowerCase());
 
-  return matchesCategory && matchesSearch;
   return matchesIndustry && matchesCategory && matchesTag && matchesSearch;
 }
 
@@ -352,198 +246,6 @@ function addPublisher(event) {
   publisherForm.reset();
 }
 
-function setAdStatus(message, tone = "muted") {
-  if (!adStatus) return;
-  adStatus.textContent = message;
-  adStatus.dataset.tone = tone;
-}
-
-function clearAdResults() {
-  if (adResults) adResults.innerHTML = "";
-}
-
-function renderAdResults(items = []) {
-  clearAdResults();
-  if (!adResults) return;
-  if (items.length === 0) {
-    const empty = document.createElement("div");
-    empty.className = "empty-state";
-    empty.textContent = "No creatives returned for this query.";
-    adResults.appendChild(empty);
-    return;
-  }
-
-  items.forEach((ad) => {
-    const card = document.createElement("article");
-    card.className = "ad-card";
-
-    const title = document.createElement("h3");
-    title.textContent = ad.ad_creative_link_title || "Untitled creative";
-    card.appendChild(title);
-
-    if (ad.ad_creative_body) {
-      const body = document.createElement("p");
-      body.textContent = ad.ad_creative_body;
-      card.appendChild(body);
-    }
-
-    const meta = document.createElement("div");
-    meta.className = "ad-meta";
-    const platforms = document.createElement("span");
-    platforms.className = "tag";
-    platforms.textContent = ad.publisher_platforms?.join(", ") || "Unknown platforms";
-    meta.appendChild(platforms);
-
-    if (ad.ad_reached_countries?.length) {
-      const countries = document.createElement("span");
-      countries.className = "tag";
-      countries.textContent = `Countries: ${ad.ad_reached_countries.join(", ")}`;
-      meta.appendChild(countries);
-    }
-
-    card.appendChild(meta);
-
-    if (ad.ad_snapshot_url) {
-      const link = document.createElement("a");
-      link.href = ad.ad_snapshot_url;
-      link.className = "ad-link";
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = "Open ad snapshot";
-      card.appendChild(link);
-    }
-
-    adResults.appendChild(card);
-  });
-}
-
-async function loadCreativesForPublisher(publisherId, { focusSelect = false } = {}) {
-  if (!publisherId) {
-    setAdStatus("Select a publisher first.", "warn");
-    return;
-  }
-
-  const publisher = state.publishers.find((p) => p.id === publisherId);
-  if (!publisher) {
-    setAdStatus("Publisher not found in the list.", "warn");
-    return;
-  }
-
-  if (!graphApiToken) {
-    setAdStatus("Add a Graph API access token before querying.", "warn");
-    return;
-  }
-
-  if (/\s/.test(graphApiToken)) {
-    setAdStatus(
-      "The access token looks malformed. Paste the raw token without quotes, spaces, or a 'Bearer' prefix.",
-      "warn"
-    );
-    return;
-  }
-
-  if (focusSelect && adPublisherSelect) {
-    adPublisherSelect.value = publisherId;
-  }
-
-  const country = adCountryInput?.value.trim() || "US";
-  const limit = Math.min(Math.max(Number(adLimitInput?.value) || 12, 1), 50);
-
-  const url = new URL("https://graph.facebook.com/v20.0/ads_archive");
-  url.searchParams.set("access_token", graphApiToken);
-  url.searchParams.set("search_terms", publisher.name);
-  url.searchParams.set("ad_reached_countries", country || "US");
-  url.searchParams.set("ad_active_status", "ALL");
-  url.searchParams.set("ad_type", "ALL");
-  url.searchParams.set(
-    "fields",
-    [
-      "ad_creative_body",
-      "ad_creative_link_caption",
-      "ad_creative_link_description",
-      "ad_creative_link_title",
-      "ad_snapshot_url",
-      "publisher_platforms",
-      "ad_reached_countries",
-    ].join(",")
-  );
-  url.searchParams.set("limit", String(limit));
-
-  setAdStatus(`Fetching creatives for ${publisher.name}…`, "info");
-  clearAdResults();
-
-  try {
-    const response = await fetch(url.toString());
-    if (!response.ok) {
-      const graphErr = await parseGraphError(response);
-      throw new Error(graphErr);
-    }
-
-    const data = await response.json();
-    if (data?.error) {
-      const graphErr = formatGraphError(data.error);
-      throw new Error(graphErr);
-    }
-
-    const items = data?.data || [];
-    renderAdResults(items);
-    setAdStatus(`Loaded ${items.length} creatives for ${publisher.name}.`, "success");
-  } catch (err) {
-    console.error("Failed to fetch ads", err);
-    const fallback =
-      "Unable to load creatives. Confirm the token, permissions, and network access, then try again.";
-    const message = err?.message || fallback;
-    setAdStatus(`Unable to load creatives: ${message}`, "error");
-  }
-}
-
-function formatGraphError(error, meta = {}) {
-  if (!error) return "An unknown Graph API error occurred.";
-
-  const parts = [error.error_user_msg || error.message || "Graph API request failed."];
-  const codes = [error.code, error.error_subcode].filter(Boolean);
-  if (codes.length) parts.push(`(code ${codes.join("/")})`);
-  if (error.fbtrace_id) parts.push(`trace ${error.fbtrace_id}`);
-  if (meta.status) parts.push(`[HTTP ${meta.status}]`);
-
-  const message = parts.join(" ");
-
-  if (codes.includes(1)) {
-    return `${message} Check that the access token is valid, not expired, and has Ads Library access with ads_read. If the issue persists, regenerate the token and retry.`;
-  }
-
-  if (codes.includes(190)) {
-    return `${message} The token may be malformed. Paste the raw access token without quotes or a 'Bearer' prefix, ensure it has ads_read/Ads Library permissions, and try again.`;
-  }
-
-  return message;
-}
-
-async function parseGraphError(response) {
-  try {
-    const data = await response.json();
-    if (data?.error) return formatGraphError(data.error, { status: response.status });
-    if (data?.message) return `${data.message} [HTTP ${response.status}]`;
-  } catch (err) {
-    // Fall through to text parsing
-  }
-
-  try {
-    const raw = await response.text();
-    if (raw) return `${raw.trim()} [HTTP ${response.status}]`;
-  } catch (err) {
-    // Ignore parse errors and return fallback below
-  }
-
-  return `Request failed with status ${response.status}`;
-}
-
-async function handleAdLibrarySubmit(event) {
-  event.preventDefault();
-  const publisherId = adPublisherSelect?.value;
-  await loadCreativesForPublisher(publisherId);
-}
-
 function removePublisher(id) {
   state.publishers = state.publishers.filter((publisher) => publisher.id !== id);
   hydrateFilters();
@@ -553,7 +255,6 @@ function removePublisher(id) {
 
 function handleGraphTokenSubmit(event) {
   event.preventDefault();
-  const token = sanitizeGraphToken(graphTokenInput?.value);
   const token = graphTokenInput?.value.trim();
   if (!token) return;
 
@@ -579,12 +280,6 @@ function resetState() {
 }
 
 function bindListeners() {
-  [categoryFilter].forEach((select) => select.addEventListener("change", renderGrid));
-  searchInput.addEventListener("input", renderGrid);
-  publisherForm.addEventListener("submit", addPublisher);
-  if (adLibraryForm) adLibraryForm.addEventListener("submit", handleAdLibrarySubmit);
-  if (refreshPublisherOptions)
-    refreshPublisherOptions.addEventListener("click", populatePublisherSelect);
   [industryFilter, categoryFilter, tagFilter].forEach((select) =>
     select.addEventListener("change", renderGrid)
   );
