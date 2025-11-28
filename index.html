@@ -31,24 +31,12 @@
         <div class="filter-block">
           <div class="block-header">
             <h3>Filter publishers</h3>
-            <p class="helper-text">Use industry, category, tags, or search to focus the grid and ad query target.</p>
+            <p class="helper-text">Filter by category or search to focus the grid and ad query target.</p>
           </div>
           <div class="controls compact">
             <div class="control-group">
-              <label for="industryFilter">Industry</label>
-              <select id="industryFilter">
-                <option value="all">All</option>
-              </select>
-            </div>
-            <div class="control-group">
               <label for="categoryFilter">Category</label>
               <select id="categoryFilter">
-                <option value="all">All</option>
-              </select>
-            </div>
-            <div class="control-group">
-              <label for="tagFilter">Publisher tags</label>
-              <select id="tagFilter">
                 <option value="all">All</option>
               </select>
             </div>
@@ -125,7 +113,7 @@
 
     <section class="panel">
       <h2>Add a publisher</h2>
-      <p class="helper-text">Add new publishers to keep your list current. You can include multiple tags separated by commas.</p>
+      <p class="helper-text">Add new publishers to keep your list current.</p>
       <form id="publisherForm" class="form-grid">
         <label>
           Publisher name
@@ -134,14 +122,6 @@
         <label>
           Category
           <select id="publisherCategory" required></select>
-        </label>
-        <label>
-          Tag (optional)
-          <input
-            type="text"
-            id="publisherTag"
-            placeholder="e.g. Multiple creative, Canada, New launch"
-          />
         </label>
         <div class="form-actions">
           <button type="submit">Add publisher</button>
@@ -155,13 +135,11 @@
       <div class="card-header">
         <div>
           <p class="tag us-only">US Only</p>
-          <p class="tag industry-tag"></p>
         </div>
         <button class="icon-button" title="Remove publisher">✕</button>
       </div>
       <h3 class="publisher-name"></h3>
       <p class="category"></p>
-      <div class="tag-list"></div>
     </article>
   </template>
 

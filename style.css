@@ -179,12 +179,6 @@ button.secondary {
   color: #86efac;
 }
 
-.tag.industry {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: rgba(56, 189, 248, 0.3);
-  color: #bae6fd;
-}
-
 .card h3 {
   margin: 0;
 }
@@ -212,11 +206,6 @@ button.secondary {
 .card p.category {
   margin: 0;
   color: var(--muted);
-}
-
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .panel {
