@@ -189,6 +189,26 @@ button.secondary {
   margin: 0;
 }
 
+.card .publisher-name {
+  cursor: pointer;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.card .publisher-name::after {
+  content: "⇢";
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.card .publisher-name:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .card p.category {
   margin: 0;
   color: var(--muted);

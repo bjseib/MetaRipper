@@ -210,7 +210,20 @@ function renderGrid() {
 
   filtered.forEach((publisher) => {
     const card = cardTemplate.content.cloneNode(true);
-    card.querySelector(".publisher-name").textContent = publisher.name;
+    const nameEl = card.querySelector(".publisher-name");
+    nameEl.textContent = publisher.name;
+    nameEl.tabIndex = 0;
+    nameEl.setAttribute("role", "button");
+    nameEl.setAttribute("title", "Load creatives for this publisher");
+    nameEl.addEventListener("click", () =>
+      loadCreativesForPublisher(publisher.id, { focusSelect: true })
+    );
+    nameEl.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        loadCreativesForPublisher(publisher.id, { focusSelect: true });
+      }
+    });
     card.querySelector(".category").textContent = publisher.category;
     card.querySelector(".industry-tag").textContent = state.industries[0];
     const tagList = card.querySelector(".tag-list");
@@ -340,11 +353,15 @@ function renderAdResults(items = []) {
   });
 }
 
-async function handleAdLibrarySubmit(event) {
-  event.preventDefault();
-  const publisherId = adPublisherSelect?.value;
+async function loadCreativesForPublisher(publisherId, { focusSelect = false } = {}) {
   if (!publisherId) {
     setAdStatus("Select a publisher first.", "warn");
+    return;
+  }
+
+  const publisher = state.publishers.find((p) => p.id === publisherId);
+  if (!publisher) {
+    setAdStatus("Publisher not found in the list.", "warn");
     return;
   }
 
@@ -353,10 +370,8 @@ async function handleAdLibrarySubmit(event) {
     return;
   }
 
-  const publisher = state.publishers.find((p) => p.id === publisherId);
-  if (!publisher) {
-    setAdStatus("Publisher not found in the list.", "warn");
-    return;
+  if (focusSelect && adPublisherSelect) {
+    adPublisherSelect.value = publisherId;
   }
 
   const country = adCountryInput?.value.trim() || "US";
@@ -418,6 +433,12 @@ async function handleAdLibrarySubmit(event) {
       "error"
     );
   }
+}
+
+async function handleAdLibrarySubmit(event) {
+  event.preventDefault();
+  const publisherId = adPublisherSelect?.value;
+  await loadCreativesForPublisher(publisherId);
 }
 
 function removePublisher(id) {
