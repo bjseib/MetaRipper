@@ -1,4 +1,5 @@
 const defaultState = {
+  industries: ["Real Money Gaming"],
   categories: [
     "Online Casino",
     "Online Sportsbook",
@@ -6,45 +7,45 @@ const defaultState = {
     "DFS",
   ],
   publishers: [
-    { name: "Caesars Palace Online Casino", category: "Online Casino" },
-    { name: "DraftKings Casino", category: "Online Casino" },
-    { name: "FanDuel Casino", category: "Online Casino" },
-    { name: "BetMGM Casino", category: "Online Casino" },
-    { name: "Bet365 US", category: "Online Casino" },
-    { name: "Hard Rock Bet", category: "Online Casino" },
-    { name: "Golden Nugget Online Casino", category: "Online Casino" },
-    { name: "BetRivers", category: "Online Casino" },
-    { name: "betPARX", category: "Online Casino" },
-    { name: "PlayStar", category: "Online Casino" },
-    { name: "Fanatics Casino", category: "Online Casino" },
-    { name: "Borgata Hotel Casino & Spa", category: "Online Casino" },
-    { name: "Bally Bet Sportsbook", category: "Online Casino" },
-    { name: "FireKeepers Casino", category: "Online Casino" },
-    { name: "Caesars Sportsbook", category: "Online Sportsbook" },
-    { name: "DraftKings Sportsbook", category: "Online Sportsbook" },
-    { name: "FanDuel Sportsbook", category: "Online Sportsbook" },
-    { name: "BetMGM", category: "Online Sportsbook" },
-    { name: "betPARX Sportsbook", category: "Online Sportsbook" },
-    { name: "Hard Rock Bet", category: "Online Sportsbook" },
-    { name: "BetRivers", category: "Online Sportsbook" },
-    { name: "Bally Bet Sportsbook", category: "Online Sportsbook" },
-    { name: "FireKeepers Casino", category: "Online Sportsbook" },
-    { name: "Chumba Casino", category: "Sweepstakes/Social Casino" },
-    { name: "WOW Vegas", category: "Sweepstakes/Social Casino" },
-    { name: "McLuck.com", category: "Sweepstakes/Social Casino" },
-    { name: "High 5 Casino", category: "Sweepstakes/Social Casino" },
-    { name: "RealPrize", category: "Sweepstakes/Social Casino" },
-    { name: "Betr", category: "DFS" },
-    { name: "Thrillzz Social Sportsbook", category: "DFS" },
-    { name: "Dabble Fantasy", category: "DFS" },
-    { name: "OwnersBox.com", category: "DFS" },
-    { name: "Onyx Odds", category: "DFS" },
-    { name: "Sleeper", category: "DFS" },
-    { name: "DraftKings Pick6", category: "DFS" },
-    { name: "PrizePicks", category: "DFS" },
-    { name: "Novig App", category: "DFS" },
-    { name: "FanDuel Picks", category: "DFS" },
-    { name: "Rebet, Inc.", category: "DFS" },
+    { name: "Caesars Palace Online Casino", category: "Online Casino", tags: [] },
+    { name: "DraftKings Casino", category: "Online Casino", tags: [] },
+    { name: "FanDuel Casino", category: "Online Casino", tags: [] },
+    { name: "BetMGM Casino", category: "Online Casino", tags: [] },
+    { name: "Bet365 US", category: "Online Casino", tags: [] },
+    { name: "Hard Rock Bet", category: "Online Casino", tags: [] },
+    { name: "Golden Nugget Online Casino", category: "Online Casino", tags: [] },
+    { name: "BetRivers", category: "Online Casino", tags: [] },
+    { name: "betPARX", category: "Online Casino", tags: [] },
+    { name: "PlayStar", category: "Online Casino", tags: [] },
+    { name: "Fanatics Casino", category: "Online Casino", tags: [] },
+    { name: "Borgata Hotel Casino & Spa", category: "Online Casino", tags: [] },
+    { name: "Bally Bet Sportsbook", category: "Online Casino", tags: [] },
+    { name: "FireKeepers Casino", category: "Online Casino", tags: [] },
+    { name: "Caesars Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "DraftKings Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "FanDuel Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "BetMGM", category: "Online Sportsbook", tags: [] },
+    { name: "betPARX Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "Hard Rock Bet", category: "Online Sportsbook", tags: [] },
+    { name: "BetRivers", category: "Online Sportsbook", tags: [] },
+    { name: "Bally Bet Sportsbook", category: "Online Sportsbook", tags: [] },
+    { name: "FireKeepers Casino", category: "Online Sportsbook", tags: [] },
+    { name: "Chumba Casino", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "WOW Vegas", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "McLuck.com", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "High 5 Casino", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "RealPrize", category: "Sweepstakes/Social Casino", tags: [] },
+    { name: "Betr", category: "DFS", tags: [] },
+    { name: "Thrillzz Social Sportsbook", category: "DFS", tags: [] },
+    { name: "Dabble Fantasy", category: "DFS", tags: [] },
+    { name: "OwnersBox.com", category: "DFS", tags: [] },
+    { name: "Onyx Odds", category: "DFS", tags: [] },
+    { name: "Sleeper", category: "DFS", tags: [] },
+    { name: "DraftKings Pick6", category: "DFS", tags: [] },
+    { name: "PrizePicks", category: "DFS", tags: [] },
+    { name: "Novig App", category: "DFS", tags: [] },
+    { name: "FanDuel Picks", category: "DFS", tags: [] },
+    { name: "Rebet, Inc.", category: "DFS", tags: [] },
   ],
 };
 
@@ -68,21 +69,12 @@ const clearGraphTokenButton = document.getElementById("clearGraphToken");
 const publisherForm = document.getElementById("publisherForm");
 const publisherNameInput = document.getElementById("publisherName");
 const publisherCategoryInput = document.getElementById("publisherCategory");
+const publisherTagInput = document.getElementById("publisherTag");
 const resetButton = document.getElementById("resetState");
 const cardTemplate = document.getElementById("publisherCardTemplate");
 
-function sanitizeGraphToken(raw) {
-  if (!raw) return "";
-  const trimmed = raw.trim();
-  const withoutBearer = trimmed.replace(/^Bearer\s+/i, "");
-  const withoutQuotes = withoutBearer.replace(/^['"]|['"]$/g, "");
-  return withoutQuotes.replace(/\s+/g, "");
-}
-
-const sessionToken = sanitizeGraphToken(
-  sessionStorage.getItem("graphApiAccessToken") || ""
-);
-const configToken = sanitizeGraphToken(window.graphConfig?.graphApiAccessToken || "");
+const sessionToken = sessionStorage.getItem("graphApiAccessToken") || "";
+const configToken = window.graphConfig?.graphApiAccessToken || "";
 let graphApiToken = sessionToken || configToken;
 let graphApiTokenSource = graphApiToken
   ? sessionToken
@@ -235,8 +227,12 @@ function renderGrid() {
 }
 
 function filterPublisher(publisher) {
+  const matchesIndustry =
+    industryFilter.value === "all" || state.industries.includes(industryFilter.value);
   const matchesCategory =
     categoryFilter.value === "all" || publisher.category === categoryFilter.value;
+  const matchesTag =
+    tagFilter.value === "all" || publisher.tags.includes(tagFilter.value);
   const matchesSearch = publisher.name
     .toLowerCase()
     .includes(searchInput.value.trim().toLowerCase());
@@ -254,6 +250,7 @@ function addPublisher(event) {
     id: crypto.randomUUID(),
     name,
     category,
+    tags,
   });
 
   hydrateFilters();
@@ -463,7 +460,7 @@ function removePublisher(id) {
 
 function handleGraphTokenSubmit(event) {
   event.preventDefault();
-  const token = sanitizeGraphToken(graphTokenInput?.value);
+  const token = graphTokenInput?.value.trim();
   if (!token) return;
 
   graphApiToken = token;

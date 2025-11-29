@@ -123,6 +123,14 @@
           Category
           <select id="publisherCategory" required></select>
         </label>
+        <label>
+          Tag (optional)
+          <input
+            type="text"
+            id="publisherTag"
+            placeholder="e.g. Multiple creative, Canada, New launch"
+          />
+        </label>
         <div class="form-actions">
           <button type="submit">Add publisher</button>
         </div>
@@ -133,10 +141,15 @@
   <template id="publisherCardTemplate">
     <article class="card">
       <div class="card-header">
+        <div>
+          <p class="tag us-only">US Only</p>
+          <p class="tag industry-tag"></p>
+        </div>
         <button class="icon-button" title="Remove publisher">✕</button>
       </div>
       <h3 class="publisher-name"></h3>
       <p class="category"></p>
+      <div class="tag-list"></div>
     </article>
   </template>
 

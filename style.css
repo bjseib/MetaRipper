@@ -136,8 +136,8 @@ button.secondary {
 
 .card-header {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .icon-button {
@@ -200,6 +200,11 @@ button.secondary {
 .card p.category {
   margin: 0;
   color: var(--muted);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .panel {
